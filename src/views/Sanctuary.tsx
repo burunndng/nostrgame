@@ -122,7 +122,15 @@ export default function Sanctuary() {
   // eslint-disable-next-line react-hooks/purity
   const genesisPhrase = useMemo(() => GENESIS_PHRASES[Math.floor(Math.random() * GENESIS_PHRASES.length)], []);
 
-  const npub = user?.pubkey ? `npub1${user.pubkey}` : null;
+  // Generate a stable guest ID if no user is logged in
+  const npub = useMemo(() => {
+    if (user?.pubkey) return `npub1${user.pubkey}`;
+    const stored = localStorage.getItem('luminae-guest-id');
+    if (stored) return stored;
+    const guestId = 'guest-' + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem('luminae-guest-id', guestId);
+    return guestId;
+  }, [user?.pubkey]);
 
   const getEmotion = useCallback((c: typeof creature): Emotion => {
     if (!c) return 'breathing';
