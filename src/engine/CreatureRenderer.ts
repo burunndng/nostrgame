@@ -48,6 +48,7 @@ class ParticleSystem {
   update() {
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
+      if (!p) continue;
       p.life++;
       p.x += p.vx;
       p.y += p.vy;
@@ -61,6 +62,7 @@ class ParticleSystem {
 
   draw(ctx: CanvasRenderingContext2D) {
     for (const p of this.particles) {
+      if (!p) continue;
       const a = p.alpha * 0.8;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -157,7 +159,7 @@ export class CreatureRenderer {
       this.renderEmotionIndicator(cx, cy);
 
       // Spawn ambient particles from the creature
-      if (this.animClock % 1.5 < 0.016) {
+      if (Math.abs(this.animClock % 1.5) < 0.016) {
         const alignmentHue = this.getAlignmentHue();
         this.particles.spawn(2, cx, cy, alignmentHue, 40, 0.3);
       }
@@ -487,7 +489,9 @@ export class CreatureRenderer {
 
     // Build curve points
     const points: Array<{ x: number; y: number; width: number }> = [];
-    const segCount = Math.max(1, Math.floor(limb.segments));
+    // Safeguard against NaN or invalid segments
+    const rawSegs = Math.floor(limb.segments);
+    const segCount = Number.isFinite(rawSegs) && rawSegs > 0 ? rawSegs : 5;
     for (let s = 0; s <= segCount; s++) {
       const t = s / segCount;
       const baseAngle = limb.angle + limb.curve * t * Math.sin(t * Math.PI);
