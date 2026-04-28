@@ -487,9 +487,9 @@ export class CreatureRenderer {
 
     // Build curve points
     const points: Array<{ x: number; y: number; width: number }> = [];
-    const segments = Math.max(1, Math.floor(limb.segments));
-    for (let s = 0; s <= segments; s++) {
-      const t = s / limb.segments;
+    const segCount = Math.max(1, Math.floor(limb.segments));
+    for (let s = 0; s <= segCount; s++) {
+      const t = s / segCount;
       const baseAngle = limb.angle + limb.curve * t * Math.sin(t * Math.PI);
       const len = limb.length * t;
 
