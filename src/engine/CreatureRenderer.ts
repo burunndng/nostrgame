@@ -139,6 +139,7 @@ export class CreatureRenderer {
   }
 
   render(timestamp: number) {
+    if (!this.ctx) return;
     if (!this.lastTimestamp) this.lastTimestamp = timestamp;
     const dt = (timestamp - this.lastTimestamp) / 1000;
     this.lastTimestamp = timestamp;
