@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* ─── LUMINAE Fonts ─── */
+@import "@fontsource/cinzel/400.css";
+@import "@fontsource/cormorant-garamond/400.css";
+@import "@fontsource/cormorant-garamond/400-italic.css";
+@import "@fontsource/eb-garamond/400.css";
+@import "@fontsource/eb-garamond/400-italic.css";
+@import "@fontsource/space-mono/400.css";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -187,4 +195,27 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ─── LUMINAE Design Tokens ─── */
+.luminae-text-display {
+  font-family: 'Cinzel', 'Cormorant Garamond', serif;
+}
+.luminae-text-ui {
+  font-family: 'Space Mono', monospace;
+}
+.luminae-text-flavor {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+}
+
+/* Glow utilities */
+.glow-light {
+  box-shadow: 0 0 12px rgba(168, 230, 255, 0.3);
+}
+.glow-shadow {
+  box-shadow: 0 0 12px rgba(139, 26, 74, 0.3);
+}
+.glow-neutral {
+  box-shadow: 0 0 12px rgba(127, 255, 212, 0.3);
 }
