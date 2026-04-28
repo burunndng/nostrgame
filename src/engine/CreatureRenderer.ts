@@ -96,7 +96,7 @@ function generateLimbs(seed: number[], archetype: string): Limb[] {
       width: 8 + ((seed[(i + 3) % seed.length] / 255)) * 12,
       curve: ((seed[(i + 1) % seed.length] - 128) / 128) * 0.6,
       taper: 0.3 + (seed[(i + 2) % seed.length] / 255) * 0.5,
-      segments: 5 + Math.floor(seed[(i + 4) % seed.length] / 255 * 6),
+      segments: 5 + Math.max(0, Math.floor(seed[(i + 4) % seed.length] / 255 * 6)),
       wobbleFreq: 1 + (seed[(i + 5) % seed.length] / 255) * 3,
       wobbleAmp: 3 + (seed[(i + 6) % seed.length] / 255) * 8,
     });
@@ -252,6 +252,10 @@ export class CreatureRenderer {
     const ctx = this.ctx;
     const genome = this.creature.genome;
     const seed = genome.bodyMorphSeed;
+    // Safety check for seed array
+    if (!seed || seed.length === 0) {
+      return;
+    }
     const limbs = generateLimbs(Array.from(seed), genome.archetype);
 
     const hue = genome.baseHue;
@@ -483,7 +487,8 @@ export class CreatureRenderer {
 
     // Build curve points
     const points: Array<{ x: number; y: number; width: number }> = [];
-    for (let s = 0; s <= limb.segments; s++) {
+    const segments = Math.max(1, Math.floor(limb.segments));
+    for (let s = 0; s <= segments; s++) {
       const t = s / limb.segments;
       const baseAngle = limb.angle + limb.curve * t * Math.sin(t * Math.PI);
       const len = limb.length * t;
@@ -510,12 +515,14 @@ export class CreatureRenderer {
     }
 
     // Glow tip
-    const tip = points[points.length - 1];
-    ctx.globalAlpha = 0.8 - Math.sin(this.animClock + index) * 0.3;
-    ctx.fillStyle = `hsl(${hue + index * 15}, 80%, 65%)`;
-    ctx.beginPath();
-    ctx.arc(tip.x, tip.y, Math.max(1, tip.width * 0.4), 0, Math.PI * 2);
-    ctx.fill();
+    if (points.length > 0) {
+      const tip = points[points.length - 1];
+      ctx.globalAlpha = 0.8 - Math.sin(this.animClock + index) * 0.3;
+      ctx.fillStyle = `hsl(${hue + index * 15}, 80%, 65%)`;
+      ctx.beginPath();
+      ctx.arc(tip.x, tip.y, Math.max(1, tip.width * 0.4), 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     ctx.restore();
   }
