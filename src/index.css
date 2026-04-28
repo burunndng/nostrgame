@@ -1,13 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* ─── LUMINAE Fonts ─── */
-@import "@fontsource/cinzel/400.css";
-@import "@fontsource/cormorant-garamond/400.css";
-@import "@fontsource/cormorant-garamond/400-italic.css";
-@import "@fontsource/eb-garamond/400.css";
-@import "@fontsource/eb-garamond/400-italic.css";
-@import "@fontsource/space-mono/400.css";
+/* ─── LUMINAE Fonts (loaded via Google Fonts in index.html) ─── */
 
 @custom-variant dark (&:is(.dark *));
 
