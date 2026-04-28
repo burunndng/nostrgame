@@ -3,15 +3,10 @@ import { useCreature } from '@/stores/creature';
 import {
   ArrowLeft,
   Heart,
-  Zap,
-  Shield,
   Wind,
   Users,
-  Link,
   Crown,
-  Trophy,
   Crosshair,
-  Droplets,
 } from 'lucide-react';
 import {
   AFFINITY_COLORS,
@@ -53,10 +48,10 @@ export default function Codex() {
     );
   }
 
+  // eslint-disable-next-line react-hooks/purity
   const daysAlive = Math.floor((Date.now() / 1000 - creature.birthTimestamp) / 86400);
   const stage = getCreatureStageByDays(daysAlive);
   const hp = Math.floor(creature.stats.vitality * 4.5);
-  const maxHp = hp;
   const speed = Math.floor(creature.stats.reflex * 0.8 + creature.stats.bond * 0.2);
   const critChance = Math.round((creature.stats.bond / 100) * 0.35 * 100);
   const wins = creature.wins;

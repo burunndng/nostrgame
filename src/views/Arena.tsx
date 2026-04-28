@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCreature, useCreatureActions } from '@/stores/creature';
+import { useCreature } from '@/stores/creature';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { BattleEngine, createBattleParticipant } from '@/engine/BattleEngine';
 import { CreatureRenderer } from '@/engine/CreatureRenderer';
-import { ArrowLeft, Swords, Zap, Heart, Shield } from 'lucide-react';
+import { ArrowLeft, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAlignmentColor } from '@/systems/constants';
 import type { BattleLogEntry } from '@/systems/types';
@@ -117,15 +117,13 @@ export default function Arena() {
         // AI responds after a delay
         setTimeout(() => {
           const aiMoveIdx = Math.floor(Math.random() * ai.moves.length);
-          const aiEntry = engine.resolveMove(aiMoveIdx, 1);
+          engine.resolveMove(aiMoveIdx, 1);
           setBattleState(engine.state);
           setLog([...engine.state.battleLog]);
           setCurrentTurn(engine.state.turn);
           setIsResolving(false);
 
           if (engine.state.isComplete) {
-            // Update creature stats post-battle
-            // In a real implementation this would hook into the creature store
             rendererRef.current?.triggerAdrenaline();
           }
         }, 1200);
@@ -142,7 +140,7 @@ export default function Arena() {
   // Auto-start battle if not in one
   useEffect(() => {
     if (creature && !isInBattle && !battleState) {
-      startBattle();
+      setTimeout(() => startBattle(), 0);
     }
   }, [creature, isInBattle, battleState, startBattle]);
 

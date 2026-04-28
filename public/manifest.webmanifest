@@ -1,0 +1,10 @@
+{
+  "name": "LUMINAE",
+  "short_name": "LUMINAE",
+  "description": "Summon, nurture, and battle with a creature born from your Nostr soul.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030508",
+  "theme_color": "#030508",
+  "icons": []
+}

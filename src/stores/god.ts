@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { GodDecree, Trait } from '@/systems/types';
-import { ARCHETYPES } from '@/systems/constants';
+import type { GodDecree, Trait, CreatureArchetype } from '@/systems/types';
 
 interface GodDecreeStore {
   // Current active decree
@@ -113,7 +112,7 @@ export const useGodDecreeStore = create<GodDecreeStore>()(
               empathyDelta: opt.empathy,
               traitHint: opt.trait,
             })),
-            archetype: archetype as any,
+            archetype: archetype as CreatureArchetype,
             chosenIndex: null,
             timestamp: Date.now(),
             expiresAt: Date.now() + 3600 * 1000, // 1 hour to decide

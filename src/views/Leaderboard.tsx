@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trophy, Crown, Zap } from 'lucide-react';
+import { ArrowLeft, Crown } from 'lucide-react';
 import { getAlignmentColor } from '@/systems/constants';
-import type { LeaderboardEntry, PersonProfile } from '@/systems/types';
+import type { LeaderboardEntry } from '@/systems/types';
 
 // Mock leaderboard data — in production this queries a relay
 const MOCK_LEADERBOARD: LeaderboardEntry[] = [

@@ -1,5 +1,5 @@
-import type { CreatureState, CreatureGenome, Emotion } from '@/systems/types';
-import { getAlignmentColor, getDaysAlive, AFFINITY_COLORS } from '@/systems/constants';
+import type { CreatureState, Emotion } from '@/systems/types';
+import { AFFINITY_COLORS } from '@/systems/constants';
 
 // ─────────────────────────── Particle System ──────────────────────────────
 
@@ -331,7 +331,7 @@ export class CreatureRenderer {
     const wingLength = coreSize * 2.5;
     const wingWidth = coreSize * 0.8;
 
-    for (let side of [-1, 1]) {
+    for (const side of [-1, 1]) {
       ctx.beginPath();
       ctx.moveTo(0, 0);
       ctx.quadraticCurveTo(
@@ -520,7 +520,7 @@ export class CreatureRenderer {
     ctx.restore();
   }
 
-  private renderEyes(ctx: CanvasRenderingContext2D, cx: number, cy: number, coreSize: number) {
+  private renderEyes(ctx: CanvasRenderingContext2D, cx: number, cy: number, _coreSize: number) {
     if (this.emotion === 'sleeping') {
       // Closed eyes — simple lines
       ctx.strokeStyle = 'rgba(255,255,255,0.5)';
@@ -583,7 +583,7 @@ export class CreatureRenderer {
 
   private renderEmotionIndicator(cx: number, cy: number) {
     const ctx = this.ctx;
-    let emoji = '';
+    let emoji: string;
     switch (this.emotion) {
       case 'hungry':
         emoji = '···';

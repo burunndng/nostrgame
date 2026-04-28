@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { CreatureState, CreatureNeeds, CreatureStats, Trait } from '@/systems/types';
+import type { CreatureState, CreatureNeeds, CreatureStats, Emotion } from '@/systems/types';
 import type { Food } from '@/systems/types';
 import { summonCreature, suggestCreatureName, deriveCreatureHash } from '@/systems/genetics';
 import {
@@ -9,7 +9,6 @@ import {
   MAX_NEED,
   MAX_SKILL,
   ARCHETYPE_BONUSES,
-  DEFAULT_FOODS,
   getCreatureStageByDays,
 } from '@/systems/constants';
 
@@ -121,7 +120,7 @@ function decayNeeds(needs: CreatureNeeds, hoursElapsed: number, isSleeping: bool
 }
 
 function derivePenaltyFromNeeds(needs: CreatureNeeds, stats: CreatureStats, hoursElapsed: number): CreatureStats {
-  let penalty = { ...stats };
+  const penalty = { ...stats };
   if (needs.hunger <= 0) {
     penalty.vitality = clampSkill(penalty.vitality - 2 * hoursElapsed);
   }
@@ -139,14 +138,14 @@ function derivePenaltyFromNeeds(needs: CreatureNeeds, stats: CreatureStats, hour
   return penalty;
 }
 
-function getEmotionFromState(state: CreatureState): import('./types').Emotion {
+function getEmotionFromState(state: CreatureState): Emotion {
   if (state.needs.health === 0) return 'sick';
   if (state.isSleeping) return 'sleeping';
   if (state.needs.hunger < 20) return 'hungry';
   if (state.needs.happiness > 85 && state.needs.energy > 60) return 'happy';
   if (state.needs.energy < 20) return 'sleeping';
   if (state.needs.happiness < 20) return 'hungry'; // stressed
-  if (state.bond > 80 && state.needs.happiness > 70) return 'excited';
+  if (state.stats.bond > 80 && state.needs.happiness > 70) return 'excited';
   return 'breathing';
 }
 

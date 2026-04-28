@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { BattleState, BattleParticipant, PersonProfile } from '@/systems/types';
+import type { BattleState, PersonProfile } from '@/systems/types';
 
 interface BattleStore {
   activeBattle: BattleState | null;
@@ -27,13 +27,8 @@ export const useBattleStore = create<BattleStore>()((set, get) => ({
       set({ activeBattle: battle });
     },
 
-    submitMove: (moveIndex: number) => {
-      const battle = get().activeBattle;
-      if (!battle) return;
-
-      // Player is always index 0 in local mode
-      const entry = battle.battleLog[battle.battleLog.length - 1];
-      // In a real PvP this would be async, but for now we handle it
+    submitMove: (_moveIndex: number) => {
+      if (!get().activeBattle) return;
     },
 
     resolveAITurn: () => {
@@ -44,9 +39,7 @@ export const useBattleStore = create<BattleStore>()((set, get) => ({
       set({ activeBattle: null });
     },
 
-    addZapToBattle: (sats: number) => {
-      // Increase "adrenaline" of battling creature
-    },
+    addZapToBattle: (_sats: number) => {},
 
     setSearching: (v: boolean) => set({ isSearching: v }),
     setOnlineProfiles: (profiles: PersonProfile[]) => set({ onlineProfiles: profiles }),

@@ -1,13 +1,11 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CreatureRenderer } from '@/engine/CreatureRenderer';
-import { useCreatureStore, useCreature, useCreatureActions } from '@/stores/creature';
+import { useCreature, useCreatureActions } from '@/stores/creature';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { useGodDecreeStore } from '@/stores/god';
 import { cn } from '@/lib/utils';
 import {
-  NEEDS_DECAY_RATES,
   DEFAULT_FOODS,
   EVOLUTION_STAGES,
   getAlignmentColor,
@@ -18,15 +16,10 @@ import type { Emotion } from '@/systems/types';
 import {
   Heart,
   Zap,
-  Sparkles,
   Swords,
   BookOpen,
-  Trophy,
-  Coffee,
   Hand,
-  ShieldAlert,
   Activity,
-  Clock,
 } from 'lucide-react';
 
 function NeedBar({ label, value, color }: { label: string; value: number; color: string }) {
@@ -116,7 +109,6 @@ export default function Sanctuary() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<CreatureRenderer | null>(null);
   const rafRef = useRef<number>(0);
-  const tickRef = useRef<number>(0);
 
   const creature = useCreature();
   const { summon, tick, feed, pet, train, cureSickness, setName, completeEvolution } = useCreatureActions();
@@ -127,15 +119,31 @@ export default function Sanctuary() {
   const [showNameEdit, setShowNameEdit] = useState(false);
   const [tempName, setTempName] = useState('');
   const [showGenesis, setShowGenesis] = useState(false);
+  // eslint-disable-next-line react-hooks/purity
+  const genesisPhrase = useMemo(() => GENESIS_PHRASES[Math.floor(Math.random() * GENESIS_PHRASES.length)], []);
 
   const npub = user?.pubkey ? `npub1${user.pubkey}` : null;
+
+  const getEmotion = useCallback((c: typeof creature): Emotion => {
+    if (!c) return 'breathing';
+    if (c.needs.health === 0) return 'sick';
+    if (c.isSleeping) return 'sleeping';
+    if (c.needs.hunger < 20) return 'hungry';
+    if (c.needs.happiness > 85 && c.needs.energy > 60) return 'happy';
+    if (c.needs.energy < 20) return 'sleeping';
+    if (c.needs.happiness < 20) return 'breathing';
+    if (c.stats.bond > 80 && c.needs.happiness > 70) return 'excited';
+    return 'breathing';
+  }, []);
 
   // Summon creature if missing
   useEffect(() => {
     if (!creature && npub) {
       summon(npub);
-      setShowGenesis(true);
-      setTimeout(() => setShowGenesis(false), 4000);
+      setTimeout(() => {
+        setShowGenesis(true);
+        setTimeout(() => setShowGenesis(false), 4000);
+      }, 0);
     }
   }, [creature, npub, summon]);
 
@@ -169,7 +177,7 @@ export default function Sanctuary() {
       window.removeEventListener('resize', handleResize);
       renderer.destroy();
     };
-  }, []);
+  }, [creature, getEmotion]);
 
   // Real-time tick
   useEffect(() => {
@@ -179,21 +187,11 @@ export default function Sanctuary() {
     return () => clearInterval(interval);
   }, [tick]);
 
-  function getEmotion(c: typeof creature): Emotion {
-    if (!c) return 'breathing';
-    if (c.needs.health === 0) return 'sick';
-    if (c.isSleeping) return 'sleeping';
-    if (c.needs.hunger < 20) return 'hungry';
-    if (c.needs.happiness > 85 && c.needs.energy > 60) return 'happy';
-    if (c.needs.energy < 20) return 'sleeping';
-    if (c.needs.happiness < 20) return 'breathing';
-    if (c.stats.bond > 80 && c.needs.happiness > 70) return 'excited';
-    return 'breathing';
-  }
-
-  const daysAlive = creature
-    ? Math.floor((Date.now() / 1000 - creature.birthTimestamp) / 86400)
-    : 0;
+  const daysAlive = useMemo(
+    // eslint-disable-next-line react-hooks/purity
+    () => creature ? Math.floor((Date.now() / 1000 - creature.birthTimestamp) / 86400) : 0,
+    [creature]
+  );
   const currentStage = getCreatureStageByDays(daysAlive);
   const nextStage = EVOLUTION_STAGES.find((s) => s.id > currentStage.id);
 
@@ -472,7 +470,7 @@ export default function Sanctuary() {
               className="text-2xl text-white/80"
               style={{ fontFamily: '"EB Garamond", serif', fontStyle: 'italic' }}
             >
-              {GENESIS_PHRASES[Math.floor(Math.random() * GENESIS_PHRASES.length)]}
+              {genesisPhrase}
             </div>
             <div className="text-xs text-white/30 font-mono tracking-widest uppercase">
               Summoning from your soul...

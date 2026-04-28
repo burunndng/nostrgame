@@ -1,5 +1,5 @@
 import type { BattleState, BattleParticipant, BattleLogEntry, BattleMove } from '@/systems/types';
-import type { CreatureState, CreatureStats } from '@/systems/types';
+import type { CreatureState } from '@/systems/types';
 import { BASE_MOVES } from '@/systems/constants';
 
 // ──────────────────────────── Battle Logic ───────────────────────────────
@@ -85,7 +85,7 @@ export class BattleEngine {
     // Determine turn order by speed
     const attackerSpeed = attacker.creature.stats.reflex * 0.8 + attacker.creature.stats.bond * 0.2;
     const defenderSpeed = defender.creature.stats.reflex * 0.8 + defender.creature.stats.bond * 0.2;
-    const attackerFirst = attackerSpeed >= defenderSpeed;
+    const _attackerFirst = attackerSpeed >= defenderSpeed;
 
     const result = calculateDamage(attacker, defender, move);
 
@@ -164,7 +164,7 @@ export function createBattleParticipant(
   isAi?: boolean
 ): BattleParticipant {
   // Assign moves based on archetype + stage
-  let moves = [...BASE_MOVES];
+  const moves = [...BASE_MOVES];
 
   if (creature.stage >= 3) {
     // Add a "God Power" move for Familiar+

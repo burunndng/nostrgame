@@ -27,8 +27,8 @@ export function deriveBaseHue(hash: number[]): number {
   return (hash[1] * 360) / 255;
 }
 
-export function deriveBodyMorphSeed(hash: number[]): number[] {
-  return hash.slice(2, 10);
+export function deriveBodyMorphSeed(hash: number[]): Uint8Array {
+  return new Uint8Array(hash.slice(2, 10));
 }
 
 export function deriveAffinity(hash: number[]): Affinity {
